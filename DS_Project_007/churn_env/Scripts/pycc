@@ -1,0 +1,3 @@
+#!C:\Users\Owner\pyproj\DS_Project_007\DS_Project_007\churn_env\Scripts\python.exe
+from numba.pycc import main
+main()
