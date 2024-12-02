@@ -77,7 +77,7 @@ class DataPipeline:
                                                                 , min_samples_split = 30, min_samples_leaf = 20)
     
         # kNN models
-        for n in [3,5,11]:
+        for n in [3, 5, 11]:
             models['knn_' + str(n)] = KNeighborsClassifier(n_neighbors=n)
     
         # Naive-Bayes models
