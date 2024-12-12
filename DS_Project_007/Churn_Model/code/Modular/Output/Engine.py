@@ -11,6 +11,6 @@ dp_object = DataPipeline()
 
 dp_object.perform_EDA()
 dp_object.perform_feature_engineering()
-dp_object.review_baseline_models()
-dp_object.perform_model_spotchecks()
+# dp_object.review_baseline_models()
+# dp_object.perform_model_spotchecks()
 dp_object.build_final_model()

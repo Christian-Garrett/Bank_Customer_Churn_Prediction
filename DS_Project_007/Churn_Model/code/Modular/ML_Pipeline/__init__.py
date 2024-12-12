@@ -3,7 +3,6 @@ import os
 import sys
 import pandas as pd
 
-
 module_path = Path(__file__).parents[1]
 sys.path.append(str(module_path))
 
@@ -12,12 +11,14 @@ class DataPipeline:
 
     from ML_Pipeline.EDA import (get_descriptive_stats,
                                  univariate_visualizations,
-                                 split_dataset,
-                                 encode_dataset,
-                                 bivariate_visualizations,
-                                 create_features,
-                                 scale_data,
-                                 select_features)
+                                 bivariate_visualizations)
+    
+    from ML_Pipeline.Preprocessing import (split_dataset,
+                                           encode_dataset,
+                                           scale_data)
+    
+    from ML_Pipeline.FeatureEngineering import (create_features,
+                                                select_features)
 
     from ML_Pipeline.Baseline import (initialize_baseline_models,
                                       create_weight_dict,
@@ -25,22 +26,26 @@ class DataPipeline:
 
     from ML_Pipeline.DataPipeline import (make_pipeline,
                                           add_pipeline_steps,
-                                          initialize_spotcheck_models,
-                                          evaluate_spotcheck_models,
-                                          hyperparameter_tuning,
-                                          initialize_tuning_model,
-                                          rand_tuning,
-                                          grid_tuning,
-                                          ensemble_model_experiments,
-                                          initialize_ensemble_model_pipelines,
-                                          get_best_model_predictions,
-                                          get_best_model_correlations,
-                                          get_weighted_ensemble_results,
-                                          get_stacked_ensemble_results,
-                                          initialize_final_model,
-                                          error_checking_metrics,
-                                          model_performance_metrics,
                                           save_final_model)
+    
+    from ML_Pipeline.ModelEvaluation import (get_best_model_predictions,
+                                             get_best_model_correlations,
+                                             initialize_final_model,
+                                             error_checking_metrics,
+                                             model_performance_metrics)
+    
+    from ML_Pipeline.ModelTuning import (hyperparameter_tuning,
+                                         initialize_tuning_model,
+                                         rand_tuning,
+                                         grid_tuning)
+    
+    from ML_Pipeline.SpotCheck import (initialize_spotcheck_models,
+                                       evaluate_spotcheck_models)
+    
+    from ML_Pipeline.Ensembles import (ensemble_model_experiments,
+                                       initialize_ensemble_model_pipelines,
+                                       get_weighted_ensemble_results,
+                                       get_stacked_ensemble_results)
 
     def __init__(self):
 
@@ -89,6 +94,7 @@ class DataPipeline:
         self.ensemble_experiment_dict=dict()
         self.ensemble_experiment_results=dict()
         self.final_model=None
+        self.final_validation_metrics=dict()
 
     def perform_EDA(self):
 
@@ -118,7 +124,7 @@ class DataPipeline:
 
     def build_final_model(self):
 
-        self.hyperparameter_tuning()
+        # self.hyperparameter_tuning()
         self.ensemble_model_experiments()
         self.initialize_final_model()
         self.error_checking_metrics()

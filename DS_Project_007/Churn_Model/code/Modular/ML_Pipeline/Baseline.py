@@ -1,17 +1,3 @@
-'''from sklearn.linear_model import LogisticRegression
-from sklearn.svm import SVC
-from sklearn.metrics import roc_auc_score, f1_score, recall_score, confusion_matrix, classification_report
-from sklearn.decomposition import PCA
-from sklearn import tree
-#from sklearn.tree import DecisionTreeClassifier
-#from sklearn.tree import export_graphviz
-#from IPython.display import Image
-
-import subprocess
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt'''
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
