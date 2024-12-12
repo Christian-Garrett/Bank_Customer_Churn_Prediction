@@ -124,7 +124,7 @@ class DataPipeline:
 
     def build_final_model(self):
 
-        # self.hyperparameter_tuning()
+        self.hyperparameter_tuning()
         self.ensemble_model_experiments()
         self.initialize_final_model()
         self.error_checking_metrics()
