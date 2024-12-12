@@ -2,8 +2,6 @@ import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 
 
-
-
 class CustomScaler(TransformerMixin, BaseEstimator):
     """
     A custom standard scaler class with the ability to apply scaling on selected columns
@@ -30,7 +28,9 @@ class CustomScaler(TransformerMixin, BaseEstimator):
         
         # Scaling all non-categorical columns if user doesn't provide the list of columns to scale
         if self.scale_cols is None:
-            self.scale_cols = [c for c in X if ((str(X[c].dtype).find('float') != -1) or (str(X[c].dtype).find('int') != -1))]
+            self.scale_cols = [c for c in X 
+                               if ((str(X[c].dtype).find('float') != -1) or
+                                   (str(X[c].dtype).find('int') != -1))]
         
      
         ## Create mapping corresponding to scaling and normalization

@@ -2,7 +2,6 @@ import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 
 
-
 class CategoricalEncoder(TransformerMixin, BaseEstimator):
     """ 
     Encodes categorical columns using LabelEncoding, OneHotEncoding and TargetEncoding.
@@ -18,7 +17,8 @@ class CategoricalEncoder(TransformerMixin, BaseEstimator):
         Parameters
         ----------
         cols : list of str
-            Columns to encode.  Default is to one-hot/target/label encode all categorical columns in the DataFrame.
+            Columns to encode.  Default is to one-hot/target/label 
+            encode all categorical columns in the DataFrame.
         reduce_df : bool
             Whether to use reduced degrees of freedom for encoding
             (that is, add N-1 one-hot columns for a column with N 
@@ -68,7 +68,7 @@ class CategoricalEncoder(TransformerMixin, BaseEstimator):
         self : encoder
             Returns self.
         """
-        
+
         # Encode all categorical cols by default
         if self.cols is None:
             self.cols = [c for c in X if str(X[c].dtype)=='object']
@@ -77,18 +77,18 @@ class CategoricalEncoder(TransformerMixin, BaseEstimator):
         for col in self.cols:
             if col not in X:
                 raise ValueError('Column \''+col+'\' not in X')
-        
+
         # Separating out lcols, ohecols and tcols
         if self.lcols is None:
             self.lcols = [c for c in self.cols if X[c].nunique() <= 2]
-        
+
         if self.ohecols is None:
             self.ohecols = [c for c in self.cols if ((X[c].nunique() > 2) & (X[c].nunique() <= 10))]
-        
+
         if self.tcols is None:
             self.tcols = [c for c in self.cols if X[c].nunique() > 10]
-        
-        
+
+
         ## Create Label Encoding mapping
         self.lmaps = dict()
         for col in self.lcols:

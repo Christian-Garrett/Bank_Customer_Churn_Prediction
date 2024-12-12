@@ -130,4 +130,5 @@ dmypy.json
 
 
 
-churn_env
+churn_env/
+scratch.ipynb
