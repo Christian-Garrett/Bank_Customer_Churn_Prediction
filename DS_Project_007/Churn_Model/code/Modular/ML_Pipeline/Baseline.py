@@ -25,11 +25,8 @@ def create_weight_dict(self):
     # Obtaining class weights based on the 'num churn class samples' imbalance ratio
     _, num_samples = np.unique(self.y_train, return_counts=True) 
     weights = np.max(num_samples)/num_samples
-
-    weights_dict = dict()
-    class_labels = [0, 1]
-    for label, weight in zip(class_labels, weights):
-        weights_dict[label] = weight
+    class_labels = [0,1]
+    weights_dict = {k:v for (k,v) in zip(class_labels, weights)}
 
     self.train_weight_dict = weights_dict
 
