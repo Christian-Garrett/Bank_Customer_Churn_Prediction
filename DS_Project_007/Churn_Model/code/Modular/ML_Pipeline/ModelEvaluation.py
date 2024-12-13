@@ -95,27 +95,33 @@ def error_checking_metrics(self, scaling=False):
     print(f"Error Analysis Sample Records: \n{error_checking_df.sample(10)}\n")
 
     ## Visualizing distribution of predicted probabilities   
-    sns.violinplot(error_checking_df.Exited.ravel(), error_checking_df['Pred_Probs'].values)
-    plt.savefig(os.path.join(self.output_path, "Error_Analysis/pred_probs_violinplot_.png"))
+    sns.violinplot(error_checking_df.Exited.ravel(),
+                   error_checking_df['Pred_Probs'].values)
+    plt.savefig(os.path.join(self.output_path,
+                             "Error_Analysis/pred_probs_violinplot_.png"))
     plt.clf()
 
     ## Check churn distribution with respect to age
     sns.boxplot(x='Exited', y='Age', data=error_checking_df)
-    plt.savefig(os.path.join(self.output_path, "Error_Analysis/age_churn_boxplot_.png"))
+    plt.savefig(os.path.join(self.output_path,
+                             "Error_Analysis/age_churn_boxplot_.png"))
     plt.clf()
 
     ## Attempting to correctly identify pockets of high-churn customer regions in feature space
-    churn_ratio = error_checking_df.Exited.value_counts(normalize=True).sort_index()
+    churn_ratio = \
+        error_checking_df.Exited.value_counts(normalize=True).sort_index()
     print(f'Churn ratio: \n{churn_ratio}\n')
 
     target_age_churn_ratio = \
         error_checking_df[(error_checking_df.Age > 42) &
-                          (error_checking_df.Age < 53)].Exited.value_counts(normalize=True).sort_index()
+                          (error_checking_df.Age < 53)].Exited.value_counts(normalize=True
+                                                                            ).sort_index()
     print(f'Targeted age range churn ratio: \n{target_age_churn_ratio}\n')
 
     target_age_churn_ratio_pred = \
         error_checking_df[(error_checking_df.Age > 42) &
-                          (error_checking_df.Age < 53)].Predictions.value_counts(normalize=True).sort_index()
+                          (error_checking_df.Age < 53)].Predictions.value_counts(normalize=True
+                                                                                 ).sort_index()
     print(f'Targeted age range churn prediction ratio: \n{target_age_churn_ratio_pred}\n')
 
     ## Checking correlation between numeric features and target variable vs predicted variable
@@ -162,24 +168,34 @@ def error_checking_metrics(self, scaling=False):
 {threshold} threshold: \n{cm}\n')
         print(f'error analysis - classification report matrix with\
 {threshold} threshold: {cr}\n')
-        
+
     ## Checking whether the model has too much dependence on certain features
-    num_products_ratio = error_checking_df.NumOfProducts.value_counts(normalize=True).sort_index()
-    num_products_low_recall_ratio = low_recall.NumOfProducts.value_counts(normalize=True).sort_index()
-    num_products_low_precision_ratio = low_prec.NumOfProducts.value_counts(normalize=True).sort_index()
+    num_products_ratio = \
+        error_checking_df.NumOfProducts.value_counts(normalize=True).sort_index()
+    num_products_low_recall_ratio = \
+        low_recall.NumOfProducts.value_counts(normalize=True).sort_index()
+    num_products_low_precision_ratio = \
+        low_prec.NumOfProducts.value_counts(normalize=True).sort_index()
 
     print(f'number of products ratio: \n{num_products_ratio}\n')
-    print(f'number of products ratio in low recall set: \n{num_products_low_recall_ratio}\n')
-    print(f'number of products ratio in low precision set: \n{num_products_low_precision_ratio}\n')
+    print(f'number of products ratio in low recall \
+set: \n{num_products_low_recall_ratio}\n')
+    print(f'number of products ratio in low precision \
+set: \n{num_products_low_precision_ratio}\n')
 
     # Examining low recall and low precision for 'IsActiveMember'
-    isActive_ratio = error_checking_df.IsActiveMember.value_counts(normalize=True).sort_index()
-    isActive_low_recall_ratio = low_recall.IsActiveMember.value_counts(normalize=True).sort_index()
-    isActive_low_precision_ratio = low_prec.IsActiveMember.value_counts(normalize=True).sort_index()
+    isActive_ratio = \
+        error_checking_df.IsActiveMember.value_counts(normalize=True).sort_index()
+    isActive_low_recall_ratio = \
+        low_recall.IsActiveMember.value_counts(normalize=True).sort_index()
+    isActive_low_precision_ratio = \
+        low_prec.IsActiveMember.value_counts(normalize=True).sort_index()
 
     print(f'number of products ratio: \n{isActive_ratio}\n')
-    print(f'number of products ratio in low recall set: \n{isActive_low_recall_ratio}\n')
-    print(f'number of products ratio in low precision set: \n{isActive_low_precision_ratio}\n')
+    print(f'number of products ratio in low recall \
+set: \n{isActive_low_recall_ratio}\n')
+    print(f'number of products ratio in low precision \
+set: \n{isActive_low_precision_ratio}\n')
 
     ## Age distribution comparisons
     sns.violinplot(y = error_checking_df.Age)
@@ -231,11 +247,12 @@ def model_performance_metrics(self, scaling=False):
     val_probs = model_pipe.predict_proba(X)[:, 1]
 
     # Predict target values on val data
-    val_preds = np.where(val_probs > 0.45, 1, 0) # The probability threshold can be tweaked
+    val_preds = np.where(val_probs > 0.45, 1, 0)
 
     # Churn distribution visualization
     sns.boxplot(y.ravel(), val_probs)
-    plt.savefig(os.path.join(self.output_path, "Final_Model/churn_dist_boxplot_.png"))
+    plt.savefig(os.path.join(self.output_path,
+                             "Final_Model/churn_dist_boxplot_.png"))
     plt.clf()
 
     ## Validation metrics
@@ -252,8 +269,10 @@ def model_performance_metrics(self, scaling=False):
     # Output SHAP Feature Importance Analysis
     shap.initjs()
 
-    X_transformed = model_pipe.named_steps['categorical_encoding'].fit_transform(X, y)
-    X_shap = model_pipe.named_steps['add_new_features'].fit_transform(X_transformed, y)
+    X_transformed = \
+        model_pipe.named_steps['categorical_encoding'].fit_transform(X, y)
+    X_shap = \
+        model_pipe.named_steps['add_new_features'].fit_transform(X_transformed, y)
 
     explainer = shap.TreeExplainer(self.final_model)
 

@@ -8,6 +8,102 @@ sys.path.append(str(module_path))
 
 
 class DataPipeline:
+    """
+    A class used to create the churn model predictions.
+    ...
+
+    Attributes
+    ----------
+    output_path : str
+        Output data text path
+    data_path : str
+        Input data text path
+    data : df
+        Input data
+    target_var : list
+        The variable that is being predicted
+    cols_to_remove : list
+        Columns that will not be used for modeling
+    numeric_feats : list
+        Continuous data
+    categorical_feats : list
+        Non-continuous data
+    cols_to_scale : list
+        Disproportionate continuous data
+    train_data : df
+        Training dataset with encoded categorical features
+    y_train : list
+        Target variable for the training data
+    test_data : df
+        Test dataset with encoded categorical features
+    y_test : list
+        Target variable for the testing data
+    val_data : df
+        Validateion dataset with encoded categorical features
+    y_val : list
+        Target variable for the validation data
+    LR_Baseline_Model : _
+        Logistic Regression Baseline Model
+    SVC_Baseline_Model : _
+        Support Vector Machine Baseline Model
+    DT_Baseline_Model : _
+        Decision Trees Baseline Model
+    cont_transformed_vars : list
+        List of continuous variables after feature engineering step
+    cat_transformed_vars : list
+        List of categorical variables after feature engineering step                      
+    logreg_selected_feats : list
+        Selected features from logistic regression RFE (recursive feature elimination)
+    dectree_selected_feats : list
+        Selected features from decision tree RFE (recursive feature elimination)
+    train_weight_dict : dict
+        Addresses disproportionate outcome levels within the target variable
+    X_train : df
+        Training dataset with encoded and scaled data
+    X_test : df
+        Test dataset with encoded and scaled data
+    X_val : df
+        Validation dataset with encoded and scaled data
+    pca_X_train_logreg_selected : list
+        PCA reduced data with logistic regression selected features
+    pca_X_train_logtree_selected_variance_ratio : list
+        The percentage of variance captured by the selected PCA reduced features
+    pca_X_train_dectree_selected : list
+        PCA reduced data with decision tree selected features
+    pca_X_train_dectree_selected_variance_ratio : list
+        The percentage of variance captured by the selected PCA reduced features
+    baseline_results_dict : dict
+        Dictionary that contains the output results from the baseline models
+    spotcheck_models_dict : dict
+        Dictionary containing the instantiated spot check models and variations
+    spotcheck_results_dict : dict
+        Dictionary that contains the output results from the spot check models
+    tuning_result_dict : _
+        Best paramaters and cross validation scores after hyperparameter tuning
+    ensemble_experiment_dict : dict
+        Dictionary containing ensembles based from variations of target variable weighting
+    (ensemble_experiment_results) : dict
+        Dictionary containing output results from the stacked/weighted ensemble models
+    final_model : _
+        Best model after baseline, hyperparameter tuning, and ensemble experiments      
+    final_validation_metrics : dict
+        Dictionary containing final model evaluation statistics                        
+
+    Methods
+    -------
+    perform_EDA()
+        Descriptive statistics and visualizations
+    perform_feature_engineering()
+        Data encoding, new feature creation with visualizations
+    review_baseline_models()
+        Check output of a few baseline models
+    perform_model_spotchecks()
+        Deeper analysis of more potential models
+    build_final_model()
+        Hyperparameter tuning, ensemble experiments, error checking,
+        performance metrics and saving to an output file.    
+
+    """
 
     from ML_Pipeline.Preprocessing import (split_dataset,
                                            encode_dataset,
@@ -72,9 +168,6 @@ class DataPipeline:
         self.DT_Baseline_Model=None
         self.cont_transformed_vars=None
         self.cat_transformed_vars=None
-        self.scaled_cont_X_train=None 
-        self.scaled_cont_X_test=None
-        self.scaled_cont_X_val=None
         self.logreg_selected_feats=None
         self.dectree_selected_feats=None
         self.train_weight_dict=None 
@@ -82,14 +175,12 @@ class DataPipeline:
         self.X_test=None
         self.X_val=None
         self.pca_X_train_logreg_selected=None
-        self.pca_X_train_variance_ratio=None
+        self.pca_X_train_logtree_selected_variance_ratio=None
         self.pca_X_train_dectree_selected=None
         self.pca_X_train_dectree_selected_variance_ratio=None
-        self.dectree_classifier=None
         self.baseline_results_dict=None
         self.spotcheck_models_dict=dict()
         self.spotcheck_results_dict=dict()
-        self.tuning_model_pipe=None
         self.tuning_result_dict=dict()
         self.ensemble_experiment_dict=dict()
         self.ensemble_experiment_results=dict()

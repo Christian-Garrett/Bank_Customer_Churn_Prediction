@@ -15,16 +15,16 @@ from ML_Pipeline.CustomScaler import CustomScaler
 def add_pipeline_steps(self, model, scale_features=None):
 
     if scale_features:
-        result = Pipeline(steps = [('categorical_encoding', CategoricalEncoder()),
-                                   ('add_new_features', AddFeatures()),
-                                   ('standard_scaling', CustomScaler(self.cols_to_scale)),
-                                   ('classifier', model)
-                                   ])
+        result = Pipeline(steps=[('categorical_encoding', CategoricalEncoder()),
+                                 ('add_new_features', AddFeatures()),
+                                 ('standard_scaling', CustomScaler(self.cols_to_scale)),
+                                 ('classifier', model)
+                                 ])
     else:
-        result = Pipeline(steps = [('categorical_encoding', CategoricalEncoder()),
-                                   ('add_new_features', AddFeatures()),
-                                   ('classifier', model)
-                                   ])
+        result = Pipeline(steps=[('categorical_encoding', CategoricalEncoder()),
+                                 ('add_new_features', AddFeatures()),
+                                 ('classifier', model)
+                                 ])
 
     return result
 

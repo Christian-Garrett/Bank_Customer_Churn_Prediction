@@ -102,9 +102,7 @@ def get_stacked_ensemble_results(self):
 
 def initialize_ensemble_model_pipelines(self, scaling=None):
 
-    ## Ensembles - Evaluate Best Model Averaging and Stacking
     ## Three versions of the most effective models with best params for F1-score metric
-
     lgb1 = LGBMClassifier(boosting_type='dart',
                           class_weight={0: 1, 1: 1},
                           min_child_samples=20,

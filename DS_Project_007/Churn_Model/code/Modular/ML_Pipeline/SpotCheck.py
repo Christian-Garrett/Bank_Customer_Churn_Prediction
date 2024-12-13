@@ -24,10 +24,9 @@ def evaluate_spotcheck_models(self, score_metric='recall'):
         mu, sigma = np.mean(scores), np.std(scores)
 
         # Printing individual model results
-        print('Model {}: mean = {}, std_dev = {}' .format(name, mu, sigma))
+        print(f'Model {name}: mean = {mu}, std_dev = {sigma}')
 
 
-## Preparing a list of models to try out in the spot-checking process
 def initialize_spotcheck_models(self):
 
     # Tree models

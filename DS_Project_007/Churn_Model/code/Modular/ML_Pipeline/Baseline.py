@@ -26,9 +26,8 @@ def create_weight_dict(self):
     _, num_samples = np.unique(self.y_train, return_counts=True) 
     weights = np.max(num_samples)/num_samples
     class_labels = [0,1]
-    weights_dict = {k:v for (k,v) in zip(class_labels, weights)}
 
-    self.train_weight_dict = weights_dict
+    self.train_weight_dict = {k:v for (k,v) in zip(class_labels, weights)}
 
 
 def initialize_baseline_models(self):
@@ -49,15 +48,15 @@ def initialize_baseline_models(self):
 
     self.pca_X_train_logreg_selected = \
         pca.fit_transform(self.X_train[self.logreg_selected_feats].values)
-    self.pca_X_train_variance_ratio = pca.explained_variance_ratio_
+    self.pca_X_train_logtree_selected_variance_ratio = pca.explained_variance_ratio_
     print(f"Variance captured by 2D PCA w/ log reg selected features: \
-{self.pca_X_train_variance_ratio}")
+{self.pca_X_train_logtree_selected_variance_ratio}")
 
     self.pca_X_train_dectree_selected = \
         pca.fit_transform(self.train_data[self.dectree_selected_feats].values)
     self.pca_X_train_dectree_selected_variance_ratio = pca.explained_variance_ratio_
     print(f"Variance captured by 2D PCA w/ decision tree selected features: \
-{self.pca_X_train_variance_ratio}")
+{self.pca_X_train_logtree_selected_variance_ratio}")
 
     ## Define the Decision Tree model
     self.DT_Baseline_Model = \
@@ -113,15 +112,18 @@ def evaluate_baseline_models(self):
                        'SVC': {'prediction_points': None}}
 
     # Creating a mesh plane region used to illustrate the LR and SVM decision boundaries
-    x_min, x_max = self.pca_X_train_logreg_selected[:, 0].min() - 1, self.pca_X_train_logreg_selected[:, 0].max() + 1
-    y_min, y_max = self.pca_X_train_logreg_selected[:, 1].min() - 1, self.pca_X_train_logreg_selected[:, 1].max() + 1
+    x_min = self.pca_X_train_logreg_selected[:, 0].min() - 1
+    x_max = self.pca_X_train_logreg_selected[:, 0].max() + 1
+    y_min = self.pca_X_train_logreg_selected[:, 1].min() - 1
+    y_max = self.pca_X_train_logreg_selected[:, 1].max() + 1
     mesh_xx, mesh_yy = np.meshgrid(np.arange(x_min, x_max, 0.1), np.arange(y_min, y_max, 0.1))
 
     sel_logreg_cont_vars = \
         [feat for feat in self.logreg_selected_feats if feat in self.cont_transformed_vars]
     sel_logreg_cat_vars = \
         [feat for feat in self.logreg_selected_feats if feat in self.cat_transformed_vars]
-    print(f"\nmodel parameters selected from log reg: {sel_logreg_cont_vars + sel_logreg_cat_vars}")
+    print(f"\nmodel parameters selected from log reg: \
+{sel_logreg_cont_vars + sel_logreg_cat_vars}")
 
     for model in ['LR', 'SVC']:
 
@@ -148,7 +150,8 @@ def evaluate_baseline_models(self):
         baseline_results_dict[model]['train_results']['confusion_matrix'] = train_cm
         train_cr = classification_report(self.y_train, X_train_baseline_predictions)
         baseline_results_dict[model]['train_results']['classification_report'] = train_cr
-        print(f"train_rac: {train_rac}, train_rs: {train_rs}, train_cm: {train_cm}, train_cr: {train_cr}")
+        print(f"train_rac: {train_rac}, train_rs: {train_rs}, \
+train_cm: {train_cm}, train_cr: {train_cr}")
 
         ######## logistic regression baseline validation results ##########
         baseline_model.fit(self.X_val, self.y_val)

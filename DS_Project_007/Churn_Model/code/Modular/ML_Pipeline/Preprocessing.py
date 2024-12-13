@@ -7,7 +7,6 @@ from sklearn.model_selection import train_test_split
 
 def scale_data(self):
 
-    ## Feature scaling and normalization the continuous variables (Logistic Rregression and SVM)
     self.cont_transformed_vars = ['CreditScore', 'Age', 'Tenure', 'Balance', 'NumOfProducts',
                       'EstimatedSalary', 'Surname_enc', 'bal_per_product',
                       'bal_by_est_salary', 'tenure_age_ratio', 'age_surname_mean_churn']
@@ -15,7 +14,6 @@ def scale_data(self):
     self.cat_transformed_vars = ['Gender', 'HasCrCard', 'IsActiveMember', 'country_France',
                      'country_Germany', 'country_Spain']
 
-    ## Scaling only continuous columns for the training set
     scalar_object = StandardScaler()
 
     update_info = list(zip((self.train_data, self.test_data, self.val_data),
@@ -42,16 +40,17 @@ def scale_data(self):
     print(f"Scaler Transformation Attribute Mappings: {sc_map}")
 
 
-def encode_dataset(self):  # todo: loop
+def encode_dataset(self):
 
     genderLabelEncoder = LabelEncoder()
 
-    ## Label encoding Gender var w/ mapping to accomodate for categorical variations in test/var data
-    self.train_data['Gender'] = genderLabelEncoder.fit_transform(self.train_data.Gender)
+    ## Label encoding Gender variable
+    self.train_data['Gender'] = \
+        genderLabelEncoder.fit_transform(self.train_data.Gender)
     genderEncoderNameMap = \
         dict(zip(genderLabelEncoder.classes_,
                  genderLabelEncoder.transform(genderLabelEncoder.classes_)))   
-    print('\nGender Encoding Map (training set): {}' .format(genderEncoderNameMap))
+    print(f'\nGender Encoding Map (training set): {genderEncoderNameMap}')
 
     ## Encoding Gender feature for validation and test set - new values tranform to null
     self.val_data['Gender'] = self.val_data.Gender.map(genderEncoderNameMap)
@@ -61,27 +60,33 @@ def encode_dataset(self):  # todo: loop
     self.test_data['Gender'] = self.test_data.Gender.map(genderEncoderNameMap)
     self.test_data['Gender'].fillna(-1, inplace=True)
 
-    print('\nGender train set encoding: {}' .format(self.train_data.Gender.unique()))
-    print('Gender val set encoding: {}' .format(self.val_data.Gender.unique()))
-    print('Gender test set encoding: {}' .format(self.test_data.Gender.unique()))
+    print(f'\nGender train set encoding: {self.train_data.Gender.unique()}')
+    print(f'Gender val set encoding: {self.val_data.Gender.unique()}')
+    print(f'Gender test set encoding: {self.test_data.Gender.unique()}')
 
     ## One Hot Encoding for cat vars w/ multiple levels - reshape b/c not binary
     geographyLabelEncoder = LabelEncoder()
     geography_traindata_le = \
-        geographyLabelEncoder.fit_transform(self.train_data.Geography).reshape(self.train_data.shape[0], 1)
+        geographyLabelEncoder.fit_transform(self.train_data.Geography
+                                            ).reshape(self.train_data.shape[0], 1)
 
     ## One Hot Encoding Training data
-    geographyOneHotEncoder = OneHotEncoder(handle_unknown='ignore', sparse=False)
-    geography_traindata_ohe = geographyOneHotEncoder.fit_transform(geography_traindata_le)
+    geographyOneHotEncoder = \
+        OneHotEncoder(handle_unknown='ignore', sparse=False)
+    geography_traindata_ohe = \
+        geographyOneHotEncoder.fit_transform(geography_traindata_le)
 
     ## Create a Mapping to account for any variablity in the Validation and Test Data
-    geographyEncoderNameMap = dict(zip(geographyLabelEncoder.classes_,
-                                   geographyLabelEncoder.transform(geographyLabelEncoder.classes_)))
-    print('\nGeography Encoding Map (training set) ' .format(geographyEncoderNameMap))
+    geographyEncoderNameMap = \
+        dict(zip(geographyLabelEncoder.classes_,
+             geographyLabelEncoder.transform(geographyLabelEncoder.classes_)))
+    print(f'\nGeography Encoding Map (training set): {geographyEncoderNameMap} ')
 
     ## Encoding Geography feature for validation and test set
-    geography_valdata_le = self.val_data.Geography.map(geographyEncoderNameMap).ravel().reshape(-1, 1)
-    geography_testdata_le = self.test_data.Geography.map(geographyEncoderNameMap).ravel().reshape(-1, 1)
+    geography_valdata_le = \
+        self.val_data.Geography.map(geographyEncoderNameMap).ravel().reshape(-1, 1)
+    geography_testdata_le = \
+        self.test_data.Geography.map(geographyEncoderNameMap).ravel().reshape(-1, 1)
 
     ## Filling missing/NaN values created due to new categorical levels
     geography_valdata_le[np.isnan(geography_valdata_le)] = 9999
@@ -108,14 +113,13 @@ def encode_dataset(self):  # todo: loop
                    axis = 1).drop(['index'], axis=1)
 
     ## Drop the Geography column
-    self.train_data.drop(['Geography'], axis = 1, inplace=True)
-    self.val_data.drop(['Geography'], axis = 1, inplace=True)
-    self.test_data.drop(['Geography'], axis = 1, inplace=True)
-
+    self.train_data.drop(['Geography'], axis=1, inplace=True)
+    self.val_data.drop(['Geography'], axis=1, inplace=True)
+    self.test_data.drop(['Geography'], axis=1, inplace=True)
 
     ## Target Encoding the Surname Feature w/o data leakage
     means = self.train_data.groupby(['Surname']).Exited.mean()
-    print('\nSurname Churn Averages: {}\n' .format(means.head(10)))
+    print(f'\nSurname Churn Averages: {means.head(10)}\n')
 
     data_target_mean = self.y_train.mean()
 
@@ -130,9 +134,12 @@ def encode_dataset(self):  # todo: loop
     self.train_data['Surname_freq'].fillna(0, inplace=True)
     ## Create Leave-one-out target encoding for Surname
     self.train_data['Surname_enc'] = \
-        ((self.train_data.Surname_freq * self.train_data.Surname_mean_churn) - self.train_data.Exited)/(self.train_data.Surname_freq - 1)
+        ((self.train_data.Surname_freq * self.train_data.Surname_mean_churn
+          ) - self.train_data.Exited)/(self.train_data.Surname_freq - 1)
     ## Fill NaNs occuring due to category frequency being 1 or less
-    self.train_data['Surname_enc'].fillna((((self.train_data.shape[0] * data_target_mean) - self.train_data.Exited) / (self.train_data.shape[0] - 1)), inplace=True)
+    self.train_data['Surname_enc'].fillna((((self.train_data.shape[0] * data_target_mean
+                                             ) - self.train_data.Exited) / (self.train_data.shape[0] - 1)),
+                                             inplace=True)
 
     ## Apply the normal Target encoding mapping as obtained from the training set
     self.val_data['Surname_enc'] = self.val_data.Surname.map(means)
@@ -142,17 +149,16 @@ def encode_dataset(self):  # todo: loop
     self.test_data['Surname_enc'].fillna(data_target_mean, inplace=True)
 
     ## Show that using LOO Target encoding decorrelates features
-    print('\nTarget Encoding Correlations:\n {}' .format(self.train_data[['Surname_mean_churn',
-                                                                          'Surname_enc',
-                                                                          'Exited']].corr()))
-
+    print(f'\nTarget Encoding Correlations:\n \
+{self.train_data[['Surname_mean_churn', 'Surname_enc', 'Exited']].corr()}')
+    
     ### Deleting calculation columns
     self.train_data.drop(['Surname_mean_churn'], axis=1, inplace=True)
     self.train_data.drop(['Surname_freq'], axis=1, inplace=True)
 
-    print('\nEncoded Training Data: \n{}' .format(self.train_data.head()))
-    print('\nEncoded Val Data: \n{}' .format(self.val_data.head()))
-    print('\nEncoded Test Data: \n{}\n' .format(self.test_data.head()))
+    print(f'\nEncoded Training Data: \n{self.train_data.head()}')
+    print(f'\nEncoded Val Data: \n{self.val_data.head()}')
+    print(f'\nEncoded Test Data: \n{self.test_data.head()}\n')
 
 
 def split_dataset(self):
@@ -169,9 +175,9 @@ def split_dataset(self):
     self.train_data, self.val_data, self.y_train, self.y_val = \
         train_test_split(df_train_val, y_train_val, test_size = 0.12, random_state = 42)     
             
-    print('\nThe shape of the training data is: {}' .format(self.train_data.shape))
-    print('The mean of the training data is: {}' .format(np.mean(self.y_train)))
-    print('The shape of the validation data is: {}' .format(self.val_data.shape))
-    print('The mean of the validation data is: {}' .format(np.mean(self.y_val)))
-    print('The shape of the test data is: {}' .format(self.test_data.shape))      
-    print('The mean of the test data is: {}\n' .format(np.mean(self.y_test)))
+    print(f'\nThe shape of the training data is: {self.train_data.shape}')
+    print(f'The mean of the training data is: {np.mean(self.y_train)}')
+    print(f'The shape of the validation data is: {self.val_data.shape}')
+    print(f'The mean of the validation data is: {np.mean(self.y_val)}')
+    print(f'The shape of the test data is: {self.test_data.shape}')      
+    print(f'The mean of the test data is: {np.mean(self.y_test)}\n')

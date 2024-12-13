@@ -17,9 +17,12 @@ def create_features(self):
         dataset['tenure_age_ratio'] = dataset.Tenure/(dataset.Age + eps)
         dataset['age_surname_mean_churn'] = np.sqrt(dataset.Age) * dataset.Surname_enc
 
-    ## Ensuring that the new column doesn't have any missing values
-    new_cols = ['bal_per_product', 'bal_by_est_salary', 'tenure_age_ratio', 'age_surname_mean_churn']
-    print('New Features Missing Values: \n{}\n' .format(self.train_data[new_cols].isnull().sum()))
+    ## Ensuring new column has no missing values
+    new_cols = ['bal_per_product',
+                'bal_by_est_salary',
+                'tenure_age_ratio',
+                'age_surname_mean_churn']
+    print(f'New Features Missing Values: \n{self.train_data[new_cols].isnull().sum()}\n')
 
     ## Linear association of new columns with target variables to judge importance
     sns.heatmap(self.train_data[new_cols + ['Exited']].corr(), annot=True)
@@ -31,19 +34,23 @@ def select_features(self):
 
     #params = {'alpha' : 1, 'kernel' : 'linear', 'gamma': 10}    
 
-    ## Creating feature-set and target for RFE (recursive feature elimination) model
+    ## Create feature-set and target for RFE (recursive feature elimination)
     y_train = self.train_data['Exited'].values
 
-    # Use the encoded unscaled data for feature selection algorithm to help with convergence
-    X_train = self.train_data[self.cat_transformed_vars + self.cont_transformed_vars]
+    # Using encoded unscaled data for feature selection algo
+    X_train = \
+        self.train_data[self.cat_transformed_vars + self.cont_transformed_vars]
 
     # Create RFE objects with different estimators
     num_features_to_select = 10
     logreg_est = LogisticRegression()
-    rfe_logreg_object = RFE(estimator=logreg_est, n_features_to_select=num_features_to_select)
+    rfe_logreg_object = RFE(estimator=logreg_est,
+                            n_features_to_select=num_features_to_select)
 
     dectree_est = DecisionTreeClassifier(max_depth=4, criterion='entropy')
-    rfe_dectree_object = RFE(estimator=dectree_est, n_features_to_select=num_features_to_select)
+    rfe_dectree_object = \
+        RFE(estimator=dectree_est,
+            n_features_to_select=num_features_to_select)
 
     RFE_dict = {'log_reg': {'object': rfe_logreg_object,
                             'selected_feats': 'logreg_selected_feats'},
@@ -56,7 +63,8 @@ def select_features(self):
         print(f"{estimator_name} Feature Rankings: {fitted_estimator.ranking_}")
         estimator_mask = fitted_estimator.support_.tolist()
         self.__setattr__(estimator_dict['selected_feats'],
-                         [feature for keep_feature, feature in zip(estimator_mask, X_train.columns)
+                         [feature for keep_feature, feature 
+                          in zip(estimator_mask, X_train.columns)
                           if keep_feature])
         print(f"{estimator_name} Selected Features: \
 {self.__getattribute__(estimator_dict['selected_feats'])}")
