@@ -9,13 +9,13 @@ sys.path.append(str(module_path))
 
 class DataPipeline:
 
-    from ML_Pipeline.EDA import (get_descriptive_stats,
-                                 univariate_visualizations,
-                                 bivariate_visualizations)
-    
     from ML_Pipeline.Preprocessing import (split_dataset,
                                            encode_dataset,
                                            scale_data)
+     
+    from ML_Pipeline.EDA import (get_descriptive_stats,
+                                 univariate_visualizations,
+                                 bivariate_visualizations)
     
     from ML_Pipeline.FeatureEngineering import (create_features,
                                                 select_features)
@@ -27,13 +27,7 @@ class DataPipeline:
     from ML_Pipeline.DataPipeline import (make_pipeline,
                                           add_pipeline_steps,
                                           save_final_model)
-    
-    from ML_Pipeline.ModelEvaluation import (get_best_model_predictions,
-                                             get_best_model_correlations,
-                                             initialize_final_model,
-                                             error_checking_metrics,
-                                             model_performance_metrics)
-    
+
     from ML_Pipeline.ModelTuning import (hyperparameter_tuning,
                                          initialize_tuning_model,
                                          rand_tuning,
@@ -46,6 +40,12 @@ class DataPipeline:
                                        initialize_ensemble_model_pipelines,
                                        get_weighted_ensemble_results,
                                        get_stacked_ensemble_results)
+    
+    from ML_Pipeline.ModelEvaluation import (get_best_model_predictions,
+                                             get_best_model_correlations,
+                                             initialize_final_model,
+                                             error_checking_metrics,
+                                             model_performance_metrics)
 
     def __init__(self):
 
@@ -77,7 +77,7 @@ class DataPipeline:
         self.scaled_cont_X_val=None
         self.logreg_selected_feats=None
         self.dectree_selected_feats=None
-        self.train_weight_dict=None  # target var weights based on the training set
+        self.train_weight_dict=None 
         self.X_train=None  # scaled and encoded data
         self.X_test=None
         self.X_val=None
@@ -100,8 +100,8 @@ class DataPipeline:
 
         self.get_descriptive_stats()
         self.univariate_visualizations()
-        self.split_dataset()  # preprocessing step
-        self.encode_dataset()  # preprocessing step
+        self.split_dataset()
+        self.encode_dataset()
         self.bivariate_visualizations()
 
     def perform_feature_engineering(self):
