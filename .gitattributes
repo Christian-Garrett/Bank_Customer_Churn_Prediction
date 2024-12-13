@@ -62,7 +62,5 @@
 #*.rtf   diff=astextplain
 #*.RTF   diff=astextplain
 
-*.py linguist-detectable=true
-*.js linguist-detectable=false
-*.html linguist-detectable=false
-*.xml linguist-detectable=false
+# Direct Python
+*.* linguist-language=Python
